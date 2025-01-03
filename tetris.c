@@ -9,6 +9,8 @@
  *
  */
 
+/* testing bulshit */
+
 static inline uint8_t board_get(const uint8_t *vals, int32_t width, int32_t row, int32_t col) {
 
   int32_t index = row * width + col;
