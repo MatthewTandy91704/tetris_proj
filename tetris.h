@@ -84,16 +84,18 @@ const shape_t shapes[] = {
 
 };
 
-/* inline uint8_t shape_get(const shape_t *shape, int32_t row, int32_t col, int32_t rotation);
+static inline uint8_t shape_get(const shape_t *shape, int32_t row, int32_t col, int32_t rotation);
 
-inline uint8_t board_get(const uint8_t *vals, int32_t width, int32_t row, int32_t col); */
+static inline uint8_t board_get(const uint8_t *vals, int32_t width, int32_t row, int32_t col);
 
-inline void board_set(uint8_t *vals, int32_t width, int32_t row, int32_t col, uint8_t value);
+static inline void board_set(uint8_t *vals, int32_t width, int32_t row, int32_t col, uint8_t value);
 
 void update_gameplay(state_t *state, const input_t *input);
 
 void update_game(state_t *state, const input_t *input);
 
 int check_piece_valid(const piece_state_t *piece, const uint8_t *board, int32_t width, int32_t height);
+
+
 
 #endif // TETRIS_H

@@ -1,15 +1,13 @@
-#include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
+#include <SDL.h>
 #include "tetris.h"
 
 /*
  *
  */
-
-/* testing bulshit */
 
 static inline uint8_t board_get(const uint8_t *vals, int32_t width, int32_t row, int32_t col) {
 
@@ -139,11 +137,11 @@ void update_gameplay(state_t *cur_state, const input_t *input) {
 
   }
 
-  /* if (check_piece_valid(&piece, cur_state->board, WIDTH, HEIGHT) == 0) {
+  if (check_piece_valid(&piece, cur_state->board, WIDTH, HEIGHT) == 0) {
 
     
 
-  } */
+  }
 
 } /* update_gameplay() */
 
@@ -156,14 +154,56 @@ void update_game(state_t *cur_state, const input_t *input) {
   switch (cur_state->cur_phase) {
 
     case GAME_PHASE_PLAY:
-      return update_gameplay(cur_state, input);
+      update_gameplay(cur_state, input);
       break;
 
   }
 
 } /* update_game() */
 
-int main() {
+/*
+ *
+ */
+
+int WinMain(int argc, char *argv[]) {
+
+  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+
+    return 1;
+
+  }
+
+  SDL_Window *window = SDL_CreateWindow(
+  "Tetris",
+  SDL_WINDOWPOS_UNDEFINED,
+  SDL_WINDOWPOS_UNDEFINED,
+  400,
+  720,
+  SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+
+  SDL_Renderer *renderer = SDL_CreateRenderer(
+  window, -1,
+  SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+  SDL_DestroyRenderer(renderer);
+  SDL_Quit();
+
+  int quit = 0;
+
+  while (quit != 1) {
+
+    SDL_Event e;
+    while (SDL_PollEvent(&e) != 0) {
+
+      if (e.type == SDL_QUIT) {
+
+        quit = 1;
+
+      }
+
+    }
+
+  }
 
   printf("make file works");
 
