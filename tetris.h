@@ -84,9 +84,18 @@ typedef struct game_state {
 
 typedef struct input_state {
 
-  int8_t left;
-  int8_t right;
-  int8_t up;
+  uint8_t left;
+  uint8_t right;
+  uint8_t up;
+  uint8_t down;
+
+  uint8_t a;
+
+  int8_t dleft;
+  int8_t dright;
+  int8_t dup;
+  int8_t ddown;
+  int8_t da;
 
 } input_t;
 
