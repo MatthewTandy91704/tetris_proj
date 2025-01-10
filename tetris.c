@@ -165,6 +165,94 @@ void update_game(state_t *cur_state, const input_t *input) {
  *
  */
 
+void fill_rect(SDL_Renderer *renderer, int32_t x, int32_t y, int32_t width, int32_t height, color_t color) {
+
+  SDL_Rect rect = {0};
+  rect.x = x;
+  rect.y = y;
+  rect.w = width;
+  rect.h = height;
+  SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+  SDL_RenderFillRect(renderer, &rect);
+
+} /* fill_rect() */
+
+/*
+ *
+ */
+
+void draw_rect(SDL_Renderer *renderer, int32_t x, int32_t y, int32_t width, int32_t height, color_t color) {
+
+  SDL_Rect rect = {0};
+  rect.x = x;
+  rect.y = y;
+  rect.w = width;
+  rect.h = height;
+  SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+  SDL_RenderDrawRect(renderer, &rect);
+
+} /* draw_rect() */
+
+/*
+ *
+ */
+
+void draw_cell(SDL_Renderer *renderer, int32_t row, int32_t col, uint8_t value, int32_t offset_x, int32_t offset_y) {
+
+  color_t base_color = base_colors[value];
+  color_t light_color = light_colors[value];
+  color_t dark_color = dark_colors[value];
+
+  int32_t edge = GRID_SIZE / 8;
+  int32_t x = col * GRID_SIZE + offset_x;
+  int32_t y = row * GRID_SIZE + offset_y;
+
+  fill_rect(renderer, x, y, GRID_SIZE, GRID_SIZE, dark_color);
+  fill_rect(renderer, x + edge, y, GRID_SIZE - edge, GRID_SIZE - edge, light_color);
+  fill_rect(renderer, x + edge, y + edge, GRID_SIZE - edge * 2, GRID_SIZE - edge * 2, base_color);
+
+} /* draw_cell() */
+
+/*
+ *
+ */
+
+void draw_piece(SDL_Renderer *renderer, const piece_state_t *piece, int32_t offset_x, int32_t offset_y) {
+
+  const shape_t *shape = shapes + piece->shape_index;
+
+  for (int row = 0; row < shape->side; row++) {
+
+    for (int col = 0; col < shape->side; col++) {
+
+      uint8_t value = shape_get(shape, row, col, piece->rotation);
+
+      if (value) {
+
+        draw_cell(renderer, row + piece->row_offset, col + piece->col_offset, value, offset_x, offset_y);
+
+      }
+
+    }
+
+  }
+
+} /* draw_piece() */
+
+/*
+ *
+ */
+
+void render_game(state_t *game, SDL_Renderer *renderer) {
+
+  draw_piece(renderer, &game->piece, 0, 0);
+
+} /* render_game() */
+
+/*
+ *
+ */
+
 int WinMain(int argc, char *argv[]) {
 
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -185,12 +273,12 @@ int WinMain(int argc, char *argv[]) {
   window, -1,
   SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-  SDL_DestroyRenderer(renderer);
-  SDL_Quit();
+  state_t game = {};
+  input_t input = {};
 
   int quit = 0;
 
-  while (quit != 1) {
+  while (quit == 0) {
 
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
@@ -203,11 +291,22 @@ int WinMain(int argc, char *argv[]) {
 
     }
 
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderClear(renderer);
+
+    update_game(&game, &input);
+    render_game(&game, renderer);
+
+    SDL_RenderPresent(renderer);
+
   }
+
+  SDL_DestroyRenderer(renderer);
+  SDL_Quit();
 
   printf("make file works");
 
   return 0;
 
-}
+} /* WinMain() */
 
