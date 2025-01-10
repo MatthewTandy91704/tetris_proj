@@ -9,7 +9,7 @@
  *
  */
 
-static inline uint8_t board_get(const uint8_t *vals, int32_t width, int32_t row, int32_t col) {
+inline uint8_t board_get(const uint8_t *vals, int32_t width, int32_t row, int32_t col) {
 
   int32_t index = row * width + col;
   return vals[index];
@@ -20,7 +20,7 @@ static inline uint8_t board_get(const uint8_t *vals, int32_t width, int32_t row,
  *
  */
 
-static inline void board_set(uint8_t *vals, int32_t width, int32_t row, int32_t col, uint8_t value) {
+inline void board_set(uint8_t *vals, int32_t width, int32_t row, int32_t col, uint8_t value) {
 
   int32_t index = row * width + col;
   vals[index] = value;
@@ -31,7 +31,7 @@ static inline void board_set(uint8_t *vals, int32_t width, int32_t row, int32_t 
  *
  */
 
-static inline uint8_t shape_get(const shape_t *shape, int32_t row, int32_t col, int32_t rotation) {
+inline uint8_t shape_get(const shape_t *shape, int32_t row, int32_t col, int32_t rotation) {
 
   int32_t side = shape->side;
   switch (rotation) {
@@ -60,9 +60,9 @@ int check_piece_valid(const piece_state_t *piece, const uint8_t *board, int32_t 
   const shape_t *shape = shapes + piece->shape_index;
   assert(shape);
 
-  for (int32_t row = 0; row < height; ++row) {
+  for (int32_t row = 0; row < shape->side; ++row) {
 
-    for (int32_t col = 0; col < width; ++col) {
+    for (int32_t col = 0; col < shape->side; ++col) {
 
       uint8_t val = shape_get(shape, row, col, piece->rotation);
 
@@ -119,25 +119,31 @@ void update_gameplay(state_t *cur_state, const input_t *input) {
 
   piece_state_t piece = cur_state->piece;
 
-  if (input->left > 0) {
+  if (input->dleft > 0) {
 
     --piece.col_offset;
 
   }
 
-  if (input->right > 0) {
+  if (input->dright > 0) {
 
     ++piece.col_offset;
 
   }
 
-  if (input->up > 0) {
+  if (input->dup > 0) {
 
     piece.rotation = (piece.rotation + 1) % 4;
 
   }
 
   if (check_piece_valid(&piece, cur_state->board, WIDTH, HEIGHT) == 0) {
+
+    cur_state->piece = piece;
+
+  }
+
+  if (input->ddown > 0) {
 
     
 
@@ -290,6 +296,25 @@ int WinMain(int argc, char *argv[]) {
       }
 
     }
+
+    int32_t key_count;
+    const uint8_t *key_states = SDL_GetKeyboardState(&key_count);
+
+    input_t prev_input = input;
+
+    input.left = key_states[SDL_SCANCODE_LEFT];
+    input.right = key_states[SDL_SCANCODE_RIGHT];
+    input.up = key_states[SDL_SCANCODE_UP];
+    input.down = key_states[SDL_SCANCODE_DOWN];
+    input.a = key_states[SDL_SCANCODE_SPACE];
+
+    input.dleft = (int8_t)input.left - (int8_t)prev_input.left;
+    input.dright = (int8_t)input.right - (int8_t)prev_input.right;
+    input.dup = (int8_t)input.up - (int8_t)prev_input.up;
+    input.ddown = (int8_t)input.down - (int8_t)prev_input.down;
+    input.da = (int8_t)input.a - (int8_t)prev_input.a;
+
+    //printf("input: left %d, right %d, up %d\n", input.left, input.right, input.up);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderClear(renderer);
