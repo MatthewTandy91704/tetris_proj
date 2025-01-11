@@ -150,6 +150,22 @@ void spawn_piece(state_t *cur_state) {
  *
  */
 
+inline float get_time_to_next_drop(int32_t level) {
+
+  if (level > 29) {
+
+    level = 29;
+
+  }
+
+  return frames_per_drop[level] * target_seconds_per_frame;
+
+} /* get_time_to_next_drop() */
+
+/*
+ *
+ */
+
 void soft_drop(state_t *cur_state) {
 
   ++cur_state->piece.row_offset;
@@ -161,6 +177,8 @@ void soft_drop(state_t *cur_state) {
     spawn_piece(cur_state);
 
   }
+
+  cur_state->next_drop_time = cur_state->time + get_time_to_next_drop(cur_state->level);
 
 } /* soft_drop() */
 
@@ -199,6 +217,12 @@ void update_gameplay(state_t *cur_state, const input_t *input) {
   if (input->ddown > 0) {
 
     
+
+  }
+
+  while (cur_state->time >= cur_state->next_drop_time) {
+
+    soft_drop(cur_state);
 
   }
 
