@@ -139,6 +139,13 @@ void merge_piece(state_t *cur_state) {
 
 } /* merge_piece() */
 
+void spawn_piece(state_t *cur_state) {
+
+  cur_state->piece.shape_index = 0;
+  cur_state->piece.col_offset = WIDTH / 2;
+
+} /* spawn_piece() */
+
 /*
  *
  */
@@ -151,6 +158,7 @@ void soft_drop(state_t *cur_state) {
 
     --cur_state->piece.row_offset;
     merge_piece(cur_state);
+    spawn_piece(cur_state);
 
   }
 
@@ -351,6 +359,8 @@ int WinMain(int argc, char *argv[]) {
 
   state_t game = {};
   input_t input = {};
+
+  spawn_piece(&game);
 
   int quit = 0;
 

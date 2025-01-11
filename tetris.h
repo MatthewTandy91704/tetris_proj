@@ -80,6 +80,11 @@ typedef struct game_state {
   piece_state_t piece;
   game_phase_t cur_phase;
 
+  int32_t level;
+
+  float time;
+  float next_drop_time;
+
 } state_t;
 
 typedef struct input_state {
