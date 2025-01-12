@@ -115,6 +115,77 @@ int check_piece_valid(const piece_state_t *piece, const uint8_t *board, int32_t 
  *
  */
 
+void merge_piece(state_t *cur_state) {
+
+  const shape_t *shape = shapes + cur_state->piece.shape_index;
+
+  for (int32_t row = 0; row < shape->side; ++row) {
+
+    for (int32_t col = 0; col < shape->side; ++col) {
+
+      uint8_t value = shape_get(shape, row, col, cur_state->piece.rotation);
+      if (value) {
+
+        int32_t board_row = cur_state->piece.row_offset + row;
+        int32_t board_col = cur_state->piece.col_offset + col;
+
+        board_set(cur_state->board, WIDTH, board_row, board_col, value);
+
+      }
+
+    }
+
+  }
+
+} /* merge_piece() */
+
+void spawn_piece(state_t *cur_state) {
+
+  cur_state->piece.shape_index = 0;
+  cur_state->piece.col_offset = WIDTH / 2;
+
+} /* spawn_piece() */
+
+/*
+ *
+ */
+
+inline float get_time_to_next_drop(int32_t level) {
+
+  if (level > 29) {
+
+    level = 29;
+
+  }
+
+  return frames_per_drop[level] * target_seconds_per_frame;
+
+} /* get_time_to_next_drop() */
+
+/*
+ *
+ */
+
+void soft_drop(state_t *cur_state) {
+
+  ++cur_state->piece.row_offset;
+
+  if (check_piece_valid(&cur_state->piece, cur_state->board, WIDTH, HEIGHT) != 0) {
+
+    --cur_state->piece.row_offset;
+    merge_piece(cur_state);
+    spawn_piece(cur_state);
+
+  }
+
+  cur_state->next_drop_time = cur_state->time + get_time_to_next_drop(cur_state->level);
+
+} /* soft_drop() */
+
+/*
+ *
+ */
+
 void update_gameplay(state_t *cur_state, const input_t *input) {
 
   piece_state_t piece = cur_state->piece;
@@ -146,6 +217,12 @@ void update_gameplay(state_t *cur_state, const input_t *input) {
   if (input->ddown > 0) {
 
     
+
+  }
+
+  while (cur_state->time >= cur_state->next_drop_time) {
+
+    soft_drop(cur_state);
 
   }
 
@@ -249,9 +326,34 @@ void draw_piece(SDL_Renderer *renderer, const piece_state_t *piece, int32_t offs
  *
  */
 
-void render_game(state_t *game, SDL_Renderer *renderer) {
+void draw_board(SDL_Renderer *renderer, const uint8_t *board, int32_t width, int32_t height, int32_t x_offset, int32_t y_offset) {
 
-  draw_piece(renderer, &game->piece, 0, 0);
+  for (int32_t row = 0; row < height; ++row) {
+
+    for (int32_t col = 0; col < width; ++col) {
+
+      uint8_t value = board_get(board, width, row, col);
+
+      if (value) {
+
+        draw_cell(renderer, row, col, value, x_offset, y_offset);
+
+      }
+
+    }
+
+  }
+
+} /* draw_board() */
+
+/*
+ *
+ */
+
+void render_game(state_t *cur_state, SDL_Renderer *renderer) {
+
+  draw_board(renderer, cur_state->board, WIDTH, HEIGHT, 0, 0);
+  draw_piece(renderer, &cur_state->piece, 0, 0);
 
 } /* render_game() */
 
@@ -281,6 +383,8 @@ int WinMain(int argc, char *argv[]) {
 
   state_t game = {};
   input_t input = {};
+
+  spawn_piece(&game);
 
   int quit = 0;
 

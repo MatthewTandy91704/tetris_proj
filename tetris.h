@@ -6,6 +6,43 @@
 #define VISIBLE_HEIGHT (20)
 #define GRID_SIZE (30)
 
+const float frames_per_drop[] = {
+
+  48,
+  43,
+  38,
+  33,
+  28,
+  23,
+  18,
+  13,
+  8,
+  6,
+  5,
+  5,
+  5,
+  4,
+  4,
+  4,
+  3,
+  3,
+  3,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  1
+
+};
+
+const float target_seconds_per_frame = 1.f / 60.f;
+
 typedef struct color {
 
   uint8_t r; /* red */
@@ -79,6 +116,11 @@ typedef struct game_state {
   uint8_t board[WIDTH * HEIGHT];
   piece_state_t piece;
   game_phase_t cur_phase;
+
+  int32_t level;
+
+  float time;
+  float next_drop_time;
 
 } state_t;
 
