@@ -150,7 +150,7 @@ void spawn_piece(state_t *cur_state) {
  *
  */
 
-inline float get_time_to_next_drop(int32_t level) {
+float get_time_to_next_drop(int32_t level) {
 
   if (level > 29) {
 
@@ -389,6 +389,9 @@ int WinMain(int argc, char *argv[]) {
   int quit = 0;
 
   while (quit == 0) {
+
+    game.time = SDL_GetTicks() / 1000.0f;
+    
 
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
