@@ -63,8 +63,11 @@ inline color_t make_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 
 } /* make_color() */
 
+const color_t board_color = {0x28, 0x28, 0x28, 0xFF};
+
 const color_t base_colors[] = {
 
+  {0x28, 0x28, 0x28, 0xFF}, /* board  */
   {0x2D, 0x99, 0x99, 0xFF}, /* teal   */
   {0x99, 0x99, 0x2D, 0xFF}, /* yellow */
   {0x99, 0x2D, 0x99, 0xFF}, /* purple */
@@ -76,6 +79,7 @@ const color_t base_colors[] = {
 
 const color_t light_colors[] = {
 
+  {0x28, 0x28, 0x28, 0xFF}, /* board        */
   {0x44, 0xE5, 0xE5, 0xFF}, /* light teal   */
   {0xE5, 0xE5, 0x44, 0xFF}, /* light yellow */
   {0xE5, 0x44, 0xE5, 0xFF}, /* light purple */
@@ -87,6 +91,7 @@ const color_t light_colors[] = {
 
 const color_t dark_colors[] = {
 
+  {0x28, 0x28, 0x28, 0xFF}, /* board       */
   {0x1E, 0x66, 0x66, 0xFF}, /* dark teal   */
   {0x66, 0x66, 0x1E, 0xFF}, /* dark yellow */
   {0x66, 0x66, 0x1E, 0xFF}, /* dark purple */
@@ -107,19 +112,28 @@ typedef struct piece_state {
 
 typedef enum game_phase {
 
-  GAME_PHASE_PLAY
+  GAME_PHASE_PLAY,
+  GAME_PHASE_LINE
 
 } game_phase_t;
 
 typedef struct game_state {
 
   uint8_t board[WIDTH * HEIGHT];
+  uint8_t lines[HEIGHT];
   piece_state_t piece;
+  int32_t pending_line_count;
+
+
   game_phase_t cur_phase;
 
+  int32_t start_level;
   int32_t level;
+  int32_t line_count;
+  int32_t points;
 
   float time;
+  float highlight_end_time;
   float next_drop_time;
 
 } state_t;
