@@ -342,7 +342,7 @@ void update_game_line(state_t *cur_state) {
 
     }
 
-    cur_state = GAME_PHASE_PLAY;
+    cur_state->cur_phase = GAME_PHASE_PLAY; /* tried */
 
   }
 
@@ -380,7 +380,7 @@ void update_gameplay(state_t *cur_state, const input_t *input) {
 
   }
 
-  if (input->ddown > 0) {
+  if (input->ddown > 0 && cur_state->start_level > 0) {
 
     soft_drop(cur_state);
 
@@ -388,6 +388,11 @@ void update_gameplay(state_t *cur_state, const input_t *input) {
 
   if (input->da > 0) {
 
+    /* memset(cur_state->board, 0, WIDTH * HEIGHT);
+    cur_state->level = cur_state->start_level;
+    cur_state->points = 0;
+    spawn_piece(cur_state);
+    cur_state->cur_phase = GAME_PHASE_PLAY; */
     while (soft_drop(cur_state) == 0);
 
   }
@@ -417,12 +422,16 @@ void update_game(state_t *cur_state, const input_t *input) {
 
   switch (cur_state->cur_phase) {
 
+    //case GAME_PHASE_START:
+      //break;
     case GAME_PHASE_PLAY:
       update_gameplay(cur_state, input);
       break;
     case GAME_PHASE_LINE:
       update_game_line(cur_state);
       break;
+    //case GAME_PHASE_GAMEOVER:
+      //break;
 
   }
 

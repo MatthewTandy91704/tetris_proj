@@ -113,7 +113,7 @@ typedef struct piece_state {
 typedef enum game_phase {
 
   GAME_PHASE_PLAY,
-  GAME_PHASE_LINE
+  GAME_PHASE_LINE,
 
 } game_phase_t;
 
