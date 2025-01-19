@@ -6,6 +6,9 @@
 #define VISIBLE_HEIGHT (20)
 #define GRID_SIZE (30)
 
+
+#define ARRAY_COUNT(x) (sizeof(x) / sizeof((x)[0]))
+
 const float frames_per_drop[] = {
 
   48,
@@ -73,7 +76,8 @@ const color_t base_colors[] = {
   {0x99, 0x2D, 0x99, 0xFF}, /* purple */
   {0x2D, 0x99, 0x51, 0xFF}, /* green  */
   {0x99, 0x2D, 0x2D, 0xFF}, /* red    */
-  {0x2D, 0X63, 0X99, 0XFF}  /* blue   */
+  {0x2D, 0X63, 0X99, 0XFF},  /* blue   */
+  {0x99, 0x63, 0x2D, 0xFF}
 
 };
 
@@ -85,7 +89,8 @@ const color_t light_colors[] = {
   {0xE5, 0x44, 0xE5, 0xFF}, /* light purple */
   {0x44, 0xE5, 0x7A, 0xFF}, /* light green  */
   {0xE5, 0x44, 0x44, 0xFF}, /* light red    */
-  {0x44, 0x95, 0xE5, 0xFF}  /* light blue   */
+  {0x44, 0x95, 0xE5, 0xFF},  /* light blue   */
+  {0xE5, 0x95, 0x44, 0xFF}
 
 };
 
@@ -97,7 +102,8 @@ const color_t dark_colors[] = {
   {0x66, 0x66, 0x1E, 0xFF}, /* dark purple */
   {0x1E, 0x66, 0x36, 0xFF}, /* dark green  */
   {0x66, 0x1E, 0x1E, 0xFF}, /* dark red    */
-  {0x1E, 0x42, 0x66, 0xFF}  /* dark blue   */
+  {0x1E, 0x42, 0x66, 0xFF},  /* dark blue   */
+  {0x66, 0x42, 0x1E, 0xFF}
 
 };
 
@@ -193,13 +199,48 @@ const uint8_t shape_3[] = {
 
 };
 
+const uint8_t shape_4[] = {
 
+  0, 4, 4,
+  4, 4, 0,
+  0, 0, 0,
+
+};
+
+const uint8_t shape_5[] = {
+
+  5, 5, 0,
+  0, 5, 5,
+  0, 0, 0
+
+};
+
+const uint8_t shape_6[] = {
+
+  6, 0, 0,
+  6, 6, 6,
+  0, 0, 0
+
+};
+
+const uint8_t shape_7[] = {
+
+  0, 0, 7,
+  7, 7, 7,
+  0, 0, 0
+
+};
 
 const shape_t shapes[] = {
 
   {shape_1, 4},
   {shape_2, 2},
-  {shape_3, 3}
+  {shape_3, 3},
+  {shape_4, 3},
+  {shape_5, 3},
+  {shape_6, 3},
+  {shape_7, 3}
+
 
 };
 

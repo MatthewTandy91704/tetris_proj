@@ -215,9 +215,20 @@ void merge_piece(state_t *cur_state) {
  *
  */
 
+int32_t random_int(int32_t min, int32_t max) {
+
+  int32_t range = max - min;
+  return min + rand() % range;
+
+} /* random_int() */
+
+/*
+ *
+ */
+
 void spawn_piece(state_t *cur_state) {
 
-  cur_state->piece.row_offset = 0;
+  cur_state->piece.shape_index = (uint8_t)random_int(0, ARRAY_COUNT(shapes));
   cur_state->piece.col_offset = WIDTH / 2;
 
 } /* spawn_piece() */
@@ -548,8 +559,26 @@ void draw_board(SDL_Renderer *renderer, const uint8_t *board, int32_t width, int
 
 void render_game(state_t *cur_state, SDL_Renderer *renderer) {
 
+  color_t highlight_color = {0xFF, 0xFF, 0xFF, 0xFF};
+
   draw_board(renderer, cur_state->board, WIDTH, HEIGHT, 0, 0);
   draw_piece(renderer, &cur_state->piece, 0, 0);
+
+  if (cur_state->cur_phase == GAME_PHASE_LINE) {
+
+    for (int32_t row = 0; row < HEIGHT; ++row) {
+
+      if (cur_state->lines[row]) {
+
+        int32_t x = 0;
+        int32_t y = row * GRID_SIZE;
+        fill_rect(renderer, x, y, WIDTH * GRID_SIZE, GRID_SIZE, highlight_color);
+
+      }
+
+    }
+
+  }
 
 } /* render_game() */
 
@@ -601,6 +630,12 @@ int WinMain(int argc, char *argv[]) {
 
     int32_t key_count;
     const uint8_t *key_states = SDL_GetKeyboardState(&key_count);
+
+    if (key_states[SDL_SCANCODE_ESCAPE]) {
+
+      quit = 1;
+
+    }
 
     input_t prev_input = input;
 
