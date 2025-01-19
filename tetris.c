@@ -264,7 +264,7 @@ int soft_drop(state_t *cur_state) {
  *
  */
 
-inline int32_t compute_points(int32_t level, int32_t line_count) {
+int32_t compute_points(int32_t level, int32_t line_count) {
 
   switch (line_count) {
 
