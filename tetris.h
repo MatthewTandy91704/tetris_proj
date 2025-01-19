@@ -6,6 +6,46 @@
 #define VISIBLE_HEIGHT (20)
 #define GRID_SIZE (30)
 
+
+#define ARRAY_COUNT(x) (sizeof(x) / sizeof((x)[0]))
+
+const float frames_per_drop[] = {
+
+  48,
+  43,
+  38,
+  33,
+  28,
+  23,
+  18,
+  13,
+  8,
+  6,
+  5,
+  5,
+  5,
+  4,
+  4,
+  4,
+  3,
+  3,
+  3,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  1
+
+};
+
+const float target_seconds_per_frame = 1.f / 60.f;
+
 typedef struct color {
 
   uint8_t r; /* red */
@@ -26,36 +66,44 @@ inline color_t make_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 
 } /* make_color() */
 
+const color_t board_color = {0x28, 0x28, 0x28, 0xFF};
+
 const color_t base_colors[] = {
 
+  {0x28, 0x28, 0x28, 0xFF}, /* board  */
   {0x2D, 0x99, 0x99, 0xFF}, /* teal   */
   {0x99, 0x99, 0x2D, 0xFF}, /* yellow */
   {0x99, 0x2D, 0x99, 0xFF}, /* purple */
   {0x2D, 0x99, 0x51, 0xFF}, /* green  */
   {0x99, 0x2D, 0x2D, 0xFF}, /* red    */
-  {0x2D, 0X63, 0X99, 0XFF}  /* blue   */
+  {0x2D, 0X63, 0X99, 0XFF},  /* blue   */
+  {0x99, 0x63, 0x2D, 0xFF}
 
 };
 
 const color_t light_colors[] = {
 
+  {0x28, 0x28, 0x28, 0xFF}, /* board        */
   {0x44, 0xE5, 0xE5, 0xFF}, /* light teal   */
   {0xE5, 0xE5, 0x44, 0xFF}, /* light yellow */
   {0xE5, 0x44, 0xE5, 0xFF}, /* light purple */
   {0x44, 0xE5, 0x7A, 0xFF}, /* light green  */
   {0xE5, 0x44, 0x44, 0xFF}, /* light red    */
-  {0x44, 0x95, 0xE5, 0xFF}  /* light blue   */
+  {0x44, 0x95, 0xE5, 0xFF},  /* light blue   */
+  {0xE5, 0x95, 0x44, 0xFF}
 
 };
 
 const color_t dark_colors[] = {
 
+  {0x28, 0x28, 0x28, 0xFF}, /* board       */
   {0x1E, 0x66, 0x66, 0xFF}, /* dark teal   */
   {0x66, 0x66, 0x1E, 0xFF}, /* dark yellow */
   {0x66, 0x66, 0x1E, 0xFF}, /* dark purple */
   {0x1E, 0x66, 0x36, 0xFF}, /* dark green  */
   {0x66, 0x1E, 0x1E, 0xFF}, /* dark red    */
-  {0x1E, 0x42, 0x66, 0xFF}  /* dark blue   */
+  {0x1E, 0x42, 0x66, 0xFF},  /* dark blue   */
+  {0x66, 0x42, 0x1E, 0xFF}
 
 };
 
@@ -70,23 +118,46 @@ typedef struct piece_state {
 
 typedef enum game_phase {
 
-  GAME_PHASE_PLAY
+  GAME_PHASE_PLAY,
+  GAME_PHASE_LINE,
 
 } game_phase_t;
 
 typedef struct game_state {
 
   uint8_t board[WIDTH * HEIGHT];
+  uint8_t lines[HEIGHT];
   piece_state_t piece;
+  int32_t pending_line_count;
+
+
   game_phase_t cur_phase;
+
+  int32_t start_level;
+  int32_t level;
+  int32_t line_count;
+  int32_t points;
+
+  float time;
+  float highlight_end_time;
+  float next_drop_time;
 
 } state_t;
 
 typedef struct input_state {
 
-  int8_t left;
-  int8_t right;
-  int8_t up;
+  uint8_t left;
+  uint8_t right;
+  uint8_t up;
+  uint8_t down;
+
+  uint8_t a;
+
+  int8_t dleft;
+  int8_t dright;
+  int8_t dup;
+  int8_t ddown;
+  int8_t da;
 
 } input_t;
 
@@ -128,13 +199,48 @@ const uint8_t shape_3[] = {
 
 };
 
+const uint8_t shape_4[] = {
 
+  0, 4, 4,
+  4, 4, 0,
+  0, 0, 0,
+
+};
+
+const uint8_t shape_5[] = {
+
+  5, 5, 0,
+  0, 5, 5,
+  0, 0, 0
+
+};
+
+const uint8_t shape_6[] = {
+
+  6, 0, 0,
+  6, 6, 6,
+  0, 0, 0
+
+};
+
+const uint8_t shape_7[] = {
+
+  0, 0, 7,
+  7, 7, 7,
+  0, 0, 0
+
+};
 
 const shape_t shapes[] = {
 
   {shape_1, 4},
   {shape_2, 2},
-  {shape_3, 3}
+  {shape_3, 3},
+  {shape_4, 3},
+  {shape_5, 3},
+  {shape_6, 3},
+  {shape_7, 3}
+
 
 };
 
